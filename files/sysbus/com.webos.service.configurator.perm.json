@@ -1,0 +1,11 @@
+{
+    "com.palm.configurator": [
+        "database.internal",
+        "activities.manage",
+        "configurator.callbacks",
+        "settings",
+        "devices",
+        "networking.query",
+        "applications.query"
+    ]
+}
