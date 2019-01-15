@@ -22,6 +22,7 @@ using namespace std;
 
 static const char *MOJODB_DB_BUS_ADDRESS = "com.palm.db";
 static const char *MOJODB_TEMPDB_BUS_ADDRESS = "com.palm.tempdb";
+static const char *MOJODB_EPGDB_BUS_ADDRESS = "com.webos.epgdb";
 static const char *MOJODB_MEDIADB_BUS_ADDRESS = "com.webos.mediadb";
 static const char *MOJODB_PUTKIND_METHOD = "putKind";
 static const char *MOJODB_DELKIND_METHOD = "delKind";
@@ -166,3 +167,19 @@ bool TempDbKindConfigurator::CanCacheConfiguratorStatus(const std::string& confF
 	return false;
 }
 
+////////////////////////////////////////////////
+// epgDB
+EpgDbKindConfigurator::EpgDbKindConfigurator(const std::string& id, ConfigType confType, RunType type, BusClient& busClient, MojDbClient& dbClient, string configDirectory)
+	: DbKindConfigurator(id, confType, type, busClient, dbClient, configDirectory)
+{
+}
+
+const char* EpgDbKindConfigurator::ServiceName() const
+{
+	 return MOJODB_EPGDB_BUS_ADDRESS;
+}
+
+bool EpgDbKindConfigurator::CanCacheConfiguratorStatus(const std::string& confFile) const
+{
+	return false;
+}

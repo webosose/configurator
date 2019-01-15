@@ -22,6 +22,7 @@ using namespace std;
 
 static const char *MOJODB_DB_BUS_ADDRESS = "com.palm.db";
 static const char *MOJODB_TEMPDB_BUS_ADDRESS = "com.palm.tempdb";
+static const char *MOJODB_EPGDB_BUS_ADDRESS = "com.webos.epgdb";
 static const char *MOJODB_MEDIADB_BUS_ADDRESS = "com.webos.mediadb";
 static const char *MOJODB_PUTPERMISSIONS_METHOD = "putPermissions";
 
@@ -112,3 +113,19 @@ bool TempDbPermissionsConfigurator::CanCacheConfiguratorStatus(const std::string
 	return false;
 }
 
+////////////////////////////////////////////////
+// epgDB
+EpgDbPermissionsConfigurator::EpgDbPermissionsConfigurator(const std::string& id, ConfigType confType, RunType type, BusClient& busClient, MojDbClient& dbClient, string configDirectory)
+	: DbPermissionsConfigurator(id, confType, type, busClient, dbClient, configDirectory)
+{
+}
+
+const char* EpgDbPermissionsConfigurator::ServiceName() const
+{
+	 return MOJODB_EPGDB_BUS_ADDRESS;
+}
+
+bool EpgDbPermissionsConfigurator::CanCacheConfiguratorStatus(const std::string& confFile) const
+{
+	return false;
+}

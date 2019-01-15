@@ -50,6 +50,8 @@ const char* const BusClient::MEDIADB_KIND_DIR            = "mediadb/kinds";
 const char* const BusClient::MEDIADB_PERMISSIONS_DIR     = "mediadb/permissions";
 const char* const BusClient::TEMPDB_KIND_DIR             = "tempdb/kinds";
 const char* const BusClient::TEMPDB_PERMISSIONS_DIR      = "tempdb/permissions";
+const char* const BusClient::EPGDB_KIND_DIR              = "epgdb/kinds";
+const char* const BusClient::EPGDB_PERMISSIONS_DIR       = "epgdb/permissions";
 const char* const BusClient::FILE_CACHE_CONFIG_DIR       = "filecache_types";
 const char* const BusClient::ACTIVITY_CONFIG_DIR         = "activities";
 const char* const BusClient::FIRST_BOOT_FILE             = "/var/luna/preferences/ran-configurator";
@@ -431,6 +433,7 @@ BusClient::BusClient()
 : m_dbClient(&m_service),
   m_mediaDbClient(&m_service, MojDbServiceDefs::MediaServiceName),
   m_tempDbClient(&m_service, MojDbServiceDefs::TempServiceName),
+  m_epgDbClient(&m_service, MojDbServiceDefs::EpgServiceName),
   m_configuratorsCompleted(0),
   m_launchedAsService(false),
   m_shuttingDown(false),
@@ -577,6 +580,9 @@ void BusClient::ScanDir(const MojString& _id, Configurator::RunType scanType, co
 		ConfiguratorPtr tempDbKindConfigurator(new TempDbKindConfigurator(id, configType, scanType, *this, m_tempDbClient, baseDir + TEMPDB_KIND_DIR));
 		m_configurators.push_back(tempDbKindConfigurator);
 
+		ConfiguratorPtr epgDbKindConfigurator(new EpgDbKindConfigurator(id, configType, scanType, *this, m_epgDbClient, baseDir + EPGDB_KIND_DIR));
+		m_configurators.push_back(epgDbKindConfigurator);
+
 	}
 
 	if (bitmask & DBPERMISSIONS) {
@@ -588,6 +594,9 @@ void BusClient::ScanDir(const MojString& _id, Configurator::RunType scanType, co
 
 		ConfiguratorPtr tempDbPermsConfigurator(new TempDbPermissionsConfigurator(id, configType, scanType, *this, m_tempDbClient, baseDir + TEMPDB_PERMISSIONS_DIR));
 		m_configurators.push_back(tempDbPermsConfigurator);
+
+		ConfiguratorPtr epgDbPermsConfigurator(new EpgDbPermissionsConfigurator(id, configType, scanType, *this, m_epgDbClient, baseDir + EPGDB_PERMISSIONS_DIR));
+		m_configurators.push_back(epgDbPermsConfigurator);
 	}
 
 	if (bitmask & FILECACHE) {

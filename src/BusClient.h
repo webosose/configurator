@@ -111,6 +111,8 @@ private:
     static const char* const MEDIADB_PERMISSIONS_DIR;
 	static const char* const TEMPDB_KIND_DIR;
 	static const char* const TEMPDB_PERMISSIONS_DIR;
+	static const char* const EPGDB_KIND_DIR;
+	static const char* const EPGDB_PERMISSIONS_DIR;
 	static const char* const FILE_CACHE_CONFIG_DIR;
 	static const char* const ACTIVITY_CONFIG_DIR;
 	static const char* const FIRST_BOOT_FILE;
@@ -157,6 +159,7 @@ private:
 	MojDbServiceClient			 m_dbClient;
 	MojDbServiceClient			 m_mediaDbClient;
     MojDbServiceClient           m_tempDbClient;
+    MojDbServiceClient           m_epgDbClient;
 	ConfiguratorCollection       m_configurators;
 	size_t                       m_configuratorsCompleted;
 	MojRefCountedPtr<BusMethods> m_methods;
