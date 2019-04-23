@@ -65,7 +65,11 @@ public:
 		m_flags = std::move(other.m_flags);
 		return *this;
 	}
-
+	Flags& operator=(Flags&& other)
+	{
+		m_flags = std::move(other.m_flags);
+		return *this;
+	}
 	Flags operator&(Enum mask) const
 	{
 		return Flags(m_flags & mask);
