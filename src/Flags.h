@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 LG Electronics, Inc.
+// Copyright (c) 2009-2019 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,7 +53,16 @@ public:
 
 	Flags& operator=(const Flags& other)
 	{
-		m_flags = other.m_flags;
+		if (this != &other)
+		{
+			m_flags = other.m_flags;
+		}
+		return *this;
+	}
+
+	Flags& operator=(const Flags&& other)
+	{
+		m_flags = std::move(other.m_flags);
 		return *this;
 	}
 
