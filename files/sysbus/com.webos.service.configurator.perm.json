@@ -13,5 +13,10 @@
         "tempdatabase.management",
         "mediadatabase.management",
         "database.management"
+        "settings",
+        "devices",
+        "networking.query",
+        "applications.query",
+        "tts.internal"
     ]
 }
