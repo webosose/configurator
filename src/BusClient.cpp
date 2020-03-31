@@ -306,7 +306,7 @@ MojErr BusClient::BusMethods::ScanRequest(MojServiceMessage* msg, MojObject& pay
 			} else if (typeStr == "service") {
 				type = BusClient::Service;
 			} else {
-				MojErrThrow(MojErrInvalidMsg);
+				MojErrThrowMsg(MojErrInvalidMsg, "unrecognized type '%s'", typeStr.data());
 			}
 
 			if (locationStr == "system") {
@@ -314,7 +314,7 @@ MojErr BusClient::BusMethods::ScanRequest(MojServiceMessage* msg, MojObject& pay
 			} else if (locationStr == "third party") {
 				location = BusClient::ThirdParty;
 			} else {
-				MojErrThrow(MojErrInvalidMsg);
+				MojErrThrowMsg(MojErrInvalidMsg, "unrecognized type '%s'", locationStr.data());
 			}
 
 			m_client.Scan(confmode, app, type, location);
@@ -404,7 +404,7 @@ MojErr BusClient::BusMethods::Unconfigure(MojServiceMessage *msg, MojObject &pay
 			} else if (typeStr == "service") {
 				type = BusClient::Service;
 			} else {
-				MojErrThrow(MojErrInvalidMsg);
+				MojErrThrowMsg(MojErrInvalidMsg, "unrecognized type '%s'", typeStr.data());
 			}
 
 			if (locationStr == "system") {
@@ -412,7 +412,7 @@ MojErr BusClient::BusMethods::Unconfigure(MojServiceMessage *msg, MojObject &pay
 			} else if (locationStr == "third party") {
 				location = BusClient::ThirdParty;
 			} else {
-				MojErrThrow(MojErrInvalidMsg);
+				MojErrThrowMsg(MojErrInvalidMsg, "unrecognized type '%s'", locationStr.data());
 			}
 
 			m_client.Unconfigure(app, type, location, types);
