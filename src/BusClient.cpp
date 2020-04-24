@@ -458,7 +458,7 @@ MojRefCountedPtr<MojServiceRequest> BusClient::CreateRequest()
 MojRefCountedPtr<MojServiceRequest> BusClient::CreateRequest(const char *forgedAppId)
 {
 	MojRefCountedPtr<MojServiceRequest> req;
-	m_service.createRequest(req, forgedAppId);
+	(void)m_service.createRequest(req, forgedAppId);
 	return req;
 }
 
@@ -552,7 +552,7 @@ void BusClient::ScanDir(const MojString& _id, Configurator::RunType scanType, co
 	if (m_shuttingDown) {
 		LOG_DEBUG("Aborting shutdown - request received");
 		assert(m_timerTimeout != 0);
-		g_source_remove(m_timerTimeout);
+		(void)g_source_remove(m_timerTimeout);
 		m_timerTimeout = 0;
 		assert(m_shuttingDown);
 		m_shuttingDown = false;
@@ -635,7 +635,7 @@ void BusClient::RunNextConfigurator()
 	LOG_TRACE("Entering function %s", __FUNCTION__);
 
 	// Schedule an event to run the next configurator once the stack is unwound.
-	g_idle_add(&BusClient::IterateConfiguratorsCallback, this);
+	(void)g_idle_add(&BusClient::IterateConfiguratorsCallback, this);
 }
 
 gboolean BusClient::IterateConfiguratorsCallback(gpointer data)

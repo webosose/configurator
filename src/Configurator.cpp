@@ -385,7 +385,7 @@ bool Configurator::Run()
 					PMLOGKS("config", config.c_str()),
 					PMLOGKS("error", errorMsg.data()),
 					"Failed to process config: %s (error: %s)", config.c_str(), errorMsg.data());
-			// Skip this file and keep going!
+                        // Skip this file and keep going!
 			m_configureFailed.push_back(filePath);
 		}
 		m_pendingConfigs.pop_back();
@@ -443,9 +443,9 @@ bool Configurator::GetConfigFiles(const string& parent, const string& directory)
 				} else {
 					if (! parent.empty())
 						m_parentDirMap[filePath] = parent;
-
+					bool isAlreadyConfiguredBool = IsAlreadyConfigured(filePath);
 					// Check if the config file has already been processed
-					if (!(m_currentType == Configure && IsAlreadyConfigured(filePath))) {
+					if (!(m_currentType == Configure && isAlreadyConfiguredBool)) {
 						LOG_DEBUG("Found configuration '%s'", filePath.c_str());
 						m_configs.push_back(filePath);
 					} else {
@@ -481,7 +481,7 @@ const string Configurator::ReadFile(const string& filePath)
 	} catch (...) {
 	}
 
-	contents.assign((istreambuf_iterator<char>(file)),
+	(void)contents.assign((istreambuf_iterator<char>(file)),
                      istreambuf_iterator<char>());
 
 	file.close();
@@ -507,7 +507,7 @@ MojErr Configurator::BusResponseAsync(const std::string& config, MojObject& resp
 					"Response for %s but not in pending list", config.c_str());
 		} else {
 			LOG_DEBUG("Response for %s - removing from pending list", config.c_str());
-			m_pendingConfigs.erase(i);
+			(void)m_pendingConfigs.erase(i);
 		}
 
 		bool success = true;
