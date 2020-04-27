@@ -451,7 +451,7 @@ MojDbClient& BusClient::GetDbClient()
 MojRefCountedPtr<MojServiceRequest> BusClient::CreateRequest()
 {
 	MojRefCountedPtr<MojServiceRequest> req;
-	m_service.createRequest(req);
+	(void)m_service.createRequest(req);
 	return req;
 }
 
@@ -753,7 +753,7 @@ void BusClient::ScheduleShutdown()
 		Configurator::ResetConfigStats();
 
 		const PendingWork &pending = m_pending.back();
-		(pending.instance->*(pending.callback))(pending.msg.get(), pending.payload);
+		(void)(pending.instance->*(pending.callback))(pending.msg.get(), pending.payload);
 
 		m_pending.pop_back();
 		return;

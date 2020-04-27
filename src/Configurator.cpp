@@ -34,7 +34,7 @@ static std::string Replace(std::string input, const std::string& substr, const s
 	i = input.find(substr);
 	l = substr.length();
 	while (i != string::npos) {
-		input.replace(i, l, replacement);
+		(void)input.replace(i, l, replacement);
 		i = input.find(substr, i + l);
 	}
 
@@ -277,7 +277,7 @@ void Configurator::MarkConfigured(const std::string &confFile) const
 
 	if (-1 == futimens(stampFd, times)) {
 		// fall through to close()
-		unlink(stamp.c_str());
+		(void)unlink(stamp.c_str());
 		LOG_ERROR(MSGID_CONFIGURATOR_ERROR, 2,
 				PMLOGKS("file", confFile.c_str()),
 				PMLOGKS("error", strerror(errno)),
@@ -286,7 +286,7 @@ void Configurator::MarkConfigured(const std::string &confFile) const
 		LOG_DEBUG("'%s' marked as configured (stamp '%s' created)", confFile.c_str(), stamp.c_str());
 	}
 
-	close(stampFd);
+	(void)close(stampFd);
 #endif
 }
 
@@ -435,11 +435,11 @@ bool Configurator::GetConfigFiles(const string& parent, const string& directory)
 		string filename = dirp->d_name;
 		if (filename != "." && filename != "..") {
 			string filePath = directory;
-			filePath.append("/");
-			filePath.append(filename);
+			(void)filePath.append("/");
+			(void)filePath.append(filename);
 			if(0 == stat(filePath.c_str(), &stat_buf)) {
 				if (S_ISDIR(stat_buf.st_mode)) {
-					GetConfigFiles(filename, filePath);
+					(void)GetConfigFiles(filename, filePath);
 				} else {
 					if (! parent.empty())
 						m_parentDirMap[filePath] = parent;
@@ -459,7 +459,7 @@ bool Configurator::GetConfigFiles(const string& parent, const string& directory)
 			}
 		}
 	}
-	closedir(dp);
+	(void)closedir(dp);
     return true;
 }
 
@@ -477,7 +477,7 @@ const string Configurator::ReadFile(const string& filePath)
 	try {
 		file.seekg(0, ios::end);
 		contents.reserve(file.tellg());
-		file.seekg(0, ios::beg);
+		(void)file.seekg(0, ios::beg);
 	} catch (...) {
 	}
 
@@ -533,7 +533,7 @@ MojErr Configurator::BusResponseAsync(const std::string& config, MojObject& resp
 		}
 
 		// do the next config
-		Run();
+		(void)Run();
 	} catch (const std::exception& e){
 		MojErrThrowMsg(MojErrInternal, "%s", e.what());
 	} catch (...) {
