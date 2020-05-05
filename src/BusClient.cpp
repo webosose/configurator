@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 LG Electronics, Inc.
+// Copyright (c) 2009-2020 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -645,7 +645,7 @@ gboolean BusClient::IterateConfiguratorsCallback(gpointer data)
 
 	if (client->m_configuratorsCompleted == client->m_configurators.size()) {
 		if (!client->m_shuttingDown) {
-			LOG_DEBUG("No more configurators left (%d configurations completed, %d configurations failed), shutting down.", Configurator::ConfigureOk().size(), Configurator::ConfigureFailure().size());
+			LOG_DEBUG("No more configurators left (%zu configurations completed, %zu configurations failed), shutting down.", Configurator::ConfigureOk().size(), Configurator::ConfigureFailure().size());
 			client->ScheduleShutdown();
 			return client->m_msg.get() != NULL;
 		}
@@ -742,7 +742,7 @@ void BusClient::ScheduleShutdown()
 	}
 
 	if (!m_pending.empty()) {
-		LOG_DEBUG("%d pending service calls to handle remaining", m_pending.size());
+		LOG_DEBUG("%zu pending service calls to handle remaining", m_pending.size());
 
 		// still more pending work
 		m_configuratorsCompleted = 0;

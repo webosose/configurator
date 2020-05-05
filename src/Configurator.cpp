@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 LG Electronics, Inc.
+// Copyright (c) 2009-2020 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -346,7 +346,7 @@ bool Configurator::Run()
 			}
 			Complete();
 		} else {
-			LOG_DEBUG("%s :: %d configurations pending, m_completed = %d", ConfiguratorName(), m_pendingConfigs.size(), m_completed);
+			LOG_DEBUG("%s :: %zu configurations pending, m_completed = %d", ConfiguratorName(), m_pendingConfigs.size(), m_completed);
 		}
 		// nothing to do - already sent out all the requests
 		// just waiting for responses from services
@@ -385,7 +385,6 @@ bool Configurator::Run()
 					PMLOGKS("config", config.c_str()),
 					PMLOGKS("error", errorMsg.data()),
 					"Failed to process config: %s (error: %s)", config.c_str(), errorMsg.data());
-	
 			// Skip this file and keep going!
 			m_configureFailed.push_back(filePath);
 		}
