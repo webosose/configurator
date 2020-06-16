@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 LG Electronics, Inc.
+// Copyright (c) 2009-2020 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public:
 					string errorText;
 					std::string nakOkSuffix = "' already exists.";
 
-					response.getRequired("errorText", mojErrorText);
+					(void)response.getRequired("errorText", mojErrorText);
 					errorText = mojErrorText.data();
 
 					if (endsWith(errorText, nakOkSuffix)) {

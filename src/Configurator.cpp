@@ -511,7 +511,7 @@ MojErr Configurator::BusResponseAsync(const std::string& config, MojObject& resp
 		}
 
 		bool success = true;
-		response.get("returnValue", success);
+		(void)response.get("returnValue", success);
 
 		if (err || !success) {
 			m_configureFailed.push_back(config);
