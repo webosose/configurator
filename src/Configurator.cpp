@@ -475,7 +475,7 @@ const string Configurator::ReadFile(const string& filePath)
 		return contents;
 
 	try {
-		file.seekg(0, ios::end);
+		(void)file.seekg(0, ios::end);
 		contents.reserve(file.tellg());
 		(void)file.seekg(0, ios::beg);
 	} catch (...) {
