@@ -730,7 +730,7 @@ void BusClient::ScheduleShutdown()
             }
 		} else if (!failed.empty()) {
 			MojString response;
-			response.appendFormat("Partial configuration - %zu ok, %zu failed", ok.size(), failed.size());
+			(void)response.appendFormat("Partial configuration - %zu ok, %zu failed", ok.size(), failed.size());
             if(m_msg->replyError(MojErrInternal, response.data()) != MojErrNone) {
                 LOG_WARNING(MSGID_SHUTDOWN_ERROR, 1, PMLOGKS("Response", response.data()), "Partial configuration");
             }
