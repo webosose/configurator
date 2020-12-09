@@ -1,6 +1,0 @@
-{
-    "configurator.callbacks": {
-        "description": "Callback methods available for configurator",
-        "public": false
-    }
-}
