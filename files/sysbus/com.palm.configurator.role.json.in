@@ -1,6 +1,6 @@
 {
     "exeName":"@WEBOS_INSTALL_SBINDIR@/configurator",
-    "trustLevel" : ["oem"],
+    "trustLevel" : "oem",
     "type": "privileged",
     "allowedNames": ["com.palm.configurator"],
     "permissions": [
