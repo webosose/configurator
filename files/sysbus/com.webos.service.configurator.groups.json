@@ -1,4 +1,4 @@
 {
-    "allowedNames" : [],
+    "allowedNames" : ["com.palm.configurator"],
     "configurator.management" : ["oem"]
 }
