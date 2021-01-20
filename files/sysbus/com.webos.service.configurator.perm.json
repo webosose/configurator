@@ -1,11 +1,8 @@
 {
     "com.palm.configurator": [
-        "database.internal",
-        "activities.manage",
-        "configurator.callbacks",
-        "settings",
-        "devices",
-        "networking.query",
-        "applications.query"
+        "activity.operation",
+        "database.operation",
+        "filecache.management",
+        "configurator.callbacks"
     ]
 }
