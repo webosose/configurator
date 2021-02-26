@@ -3,6 +3,15 @@
         "activity.operation",
         "database.operation",
         "filecache.management",
-        "configurator.callbacks"
+        "configurator.callbacks",
+        "tempdatabase.operation",
+        "epgdatabase.operation",
+        "keymgrdatabase.operation",
+        "mediadatabase.operation",
+        "epgdatabase.management",
+        "keymgrdatabase.management",
+        "tempdatabase.management",
+        "mediadatabase.management",
+        "database.management"
     ]
 }
