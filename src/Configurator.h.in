@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 LG Electronics, Inc.
+// Copyright (c) 2009-2022 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@
 #include <tr1/unordered_map>
 #include <string>
 #include <vector>
+
+#include "md5sum.h"
 
 class ConfiguratorCallback;
 
@@ -86,7 +88,9 @@ private:
 	void              InitCacheDir() const;
 	bool              IsAlreadyConfigured(const std::string &confFile) const;
 	bool              GetConfigFiles(const std::string& parent, const std::string& directory);
-	const std::string ReadFile(const std::string& filePath);
+	const std::string ReadFile(const std::string& filePath) const;
+	bool              WriteFile(const std::string path, const std::string contents)const;
+	bool              GenerateandVerifyConfigChecksum(const std::string& path,  std::string cachepath)const;
 	void              Complete();
 	MojErr            BusResponseAsync(const std::string& filePath, MojObject& response, MojErr err, bool *cacheConfigured);
 

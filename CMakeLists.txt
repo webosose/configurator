@@ -38,6 +38,10 @@ pkg_check_modules(LUNASERVICE REQUIRED luna-service2)
 include_directories(${LUNASERVICE_INCLUDE_DIRS})
 webos_add_compiler_flags(ALL ${LUNASERVICE_CFLAGS})
 
+# -- check for openssl
+pkg_check_modules(OPENSSL REQUIRED openssl)
+webos_add_compiler_flags(ALL ${OPENSSL_CFLAGS})
+
 pkg_check_modules(DB8 REQUIRED db8>=3)
 include_directories(${DB8_INCLUDE_DIRS})
 webos_add_compiler_flags(ALL ${DB8_CFLAGS_OTHER})
@@ -59,6 +63,7 @@ target_link_libraries(configurator
                     ${DB8_LDFLAGS}
                     ${GLIB2_LDFLAGS}
                     ${LUNASERVICE_LDFLAGS}
+		    ${OPENSSL_LDFLAGS}
                     ${PTHREAD}
                     ${PMLOG_LDFLAGS}
                    )

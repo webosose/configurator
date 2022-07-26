@@ -178,19 +178,10 @@ bool Configurator::IsAlreadyConfigured(const std::string& confFile) const
             return false;
         }
 
-        std::string stamp("");
-        MojStatT stampInfo, confInfo;
-        if(kConfCacheDir)
-            stamp = kConfCacheDir + Replace(confFile, "/", "_");
-
-        if (MojErrNone != MojStat(stamp.c_str(), &stampInfo))
-            return false;
-
-        if (MojErrNone != MojStat(confFile.c_str(), &confInfo))
-            return false;
-
-        LOG_DEBUG("%s may already be configured - %s exists", confFile.c_str(), stamp.c_str());
-            return stampInfo.st_mtime >= confInfo.st_mtime;
+	std::string stamp = kConfCacheDir + Replace(confFile, "/", "_");
+	LOG_DEBUG("%s may already be configured - %s exists", confFile.c_str(), stamp.c_str());
+	bool returnvalue = GenerateandVerifyConfigChecksum(confFile, stamp);
+		return returnvalue;
 }
 
 void Configurator::MarkConfigured(const std::string &confFile) const
@@ -472,7 +463,7 @@ bool Configurator::GetConfigFiles(const string& parent, const string& directory)
     return true;
 }
 
-const string Configurator::ReadFile(const string& filePath)
+const string Configurator::ReadFile(const string& filePath) const
 {
 	LOG_TRACE("Entering function %s", __FUNCTION__);
 
@@ -495,6 +486,81 @@ const string Configurator::ReadFile(const string& filePath)
 
 	file.close();
 	return contents;
+}
+
+bool Configurator::WriteFile(const std::string path, const std::string contents) const
+{
+    std::ofstream file(path.c_str());
+
+    if(file.good())
+    {
+        file << contents;
+        file.flush();
+        file.close();
+        return true;
+    }
+    return false;
+}
+
+bool Configurator::GenerateandVerifyConfigChecksum(const std::string& path,  std::string cachepath) const
+{
+
+	/* Reading the actual path e.g:/etc/palm/db/permissions/filename. If the data is there,
+	*then we calculate checksum value for the config files.*/
+	string contents = ReadFile(path);
+	std::string current_checksum;
+	std::string previous_checksum;
+	bool retvalue = true;
+	ifstream checkfile;
+	bool m_newfile = false;
+
+	/*Checking whether the checksum file is already exists or not. If it doesn't exists, we will create
+	* a checksum file. If already exist, we validate the checksum value*/
+	if(ReadFile(cachepath + ".md5").empty())
+		{
+			/*If checksum file is not there, we set this flag to generate the
+			* checksum file.*/
+			m_newfile = true;
+		}
+	else
+		{
+			/*Checksum file already exists, read the checksum value.*/
+			checkfile.open(cachepath);
+			previous_checksum = ReadFile(cachepath);
+		}
+	if(contents.empty())
+		{
+			return true;
+		}
+	else
+		{
+			/*Calculating the checksum value for actual data*/
+			current_checksum = makeMD5Checksum(contents);
+		}
+	/*Storing the Checksum value in /var/cache/configurator/filemname.md5*/
+	if(m_newfile == true)
+		{
+			WriteFile(cachepath + ".md5", current_checksum);
+			retvalue = false;
+		}
+	else
+		{
+			/*Checking the checksum data of the file, if data is not modified,
+			* then nothing to do. If data is modified, update the latest checksum value
+			* then return as false.*/
+			if (current_checksum == previous_checksum)
+				{
+					LOG_DEBUG("[%s %d] md5 same", __FUNCTION__,__LINE__);
+					retvalue = true;
+				}
+			else
+				{
+					LOG_DEBUG("[%s %d] md5 diff", __FUNCTION__,__LINE__);
+					WriteFile(cachepath + ".md5", current_checksum);
+					retvalue = false;
+				}
+		}
+	return retvalue;
 }
 
 void Configurator::Complete()
