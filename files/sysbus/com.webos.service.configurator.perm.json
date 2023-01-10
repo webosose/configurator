@@ -17,6 +17,7 @@
         "devices",
         "networking.query",
         "applications.query",
-        "tts.internal"
+        "tts.internal",
+        "ppm.management"
     ]
 }
