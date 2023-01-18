@@ -60,11 +60,12 @@ ConfiguratorCallback::~ConfiguratorCallback()
 
 MojErr ConfiguratorCallback::DelegateResponse(MojObject& response, MojErr err)
 {
-	if (m_delegateInvoked)
-		return MojErrAccessDenied;
-	m_delegateInvoked = true;
-	m_defaultCacheBehaviourUsed = false;
-	return m_handler->BusResponseAsync(m_config, response, err, &m_defaultCacheBehaviourUsed);
+        if (m_delegateInvoked)
+            return MojErrAccessDenied;
+        m_delegateInvoked = true;
+        m_defaultCacheBehaviourUsed = false;
+
+        return m_handler->BusResponseAsync(m_config, response, err, &m_defaultCacheBehaviourUsed);
 }
 
 void ConfiguratorCallback::MarkConfigured()
@@ -81,29 +82,30 @@ void ConfiguratorCallback::UnmarkConfigured()
 
 MojErr ConfiguratorCallback::ResponseWrapper(MojObject &response, MojErr err)
 {
-	MojErr result = MojErrNone;
-	try {
-		m_slot.cancel();
-		result = Response(response, err);
-	}  catch (const std::exception& e){
-		MojErrThrowMsg(MojErrInternal, "%s", e.what());
-	} catch (...) {
-		MojErrThrowMsg(MojErrInternal, "Uncaught exception in Configurator::BusResponse!");
-	}
+        MojErr result = MojErrNone;
+        try {
+            m_slot.cancel();
+            result = Response(response, err);
+        }  catch (const std::exception& e){
+            MojErrThrowMsg(MojErrInternal, "%s", e.what());
+        } catch (...) {
+            MojErrThrowMsg(MojErrInternal, "Uncaught exception in Configurator::BusResponse!");
+        }
 
-	if (!m_delegateInvoked)
-		result = DelegateResponse(response, result == MojErrNone ? err : result);
+        if (!m_delegateInvoked)
+            result = DelegateResponse(response, result == MojErrNone ? err : result);
 
-	if (!m_defaultCacheBehaviourUsed) {
-		if (m_unconfigure) {
-			LOG_DEBUG("Unmarking %s as configured", m_config.c_str());
-			m_handler->UnmarkConfigured(m_config);
-		} else if (m_configure) {
-			LOG_DEBUG("Marking %s as configured", m_config.c_str());
-			m_handler->MarkConfigured(m_config);
-		}
-	}
-	return result;
+        if (!m_defaultCacheBehaviourUsed) {
+            if (m_unconfigure) {
+                LOG_DEBUG("Unmarking %s as configured", m_config.c_str());
+                m_handler->UnmarkConfigured(m_config);
+
+             } else if (m_configure) {
+                 LOG_DEBUG("Marking %s as configured", m_config.c_str());
+                 m_handler->MarkConfigured(m_config);
+             }
+        }
+        return result;
 }
 
 DefaultConfiguratorCallback::DefaultConfiguratorCallback(Configurator *configurator, const std::string &filePath)
@@ -171,141 +173,148 @@ void Configurator::InitCacheDir() const
 
 bool Configurator::IsAlreadyConfigured(const std::string& confFile) const
 {
-	if (!this->CanCacheConfiguratorStatus(confFile)) {
-		LOG_DEBUG("Configurator ignores caching - returning false");
-		return false;
-	}
+        if (!this->CanCacheConfiguratorStatus(confFile)) {
+            LOG_DEBUG("Configurator ignores caching - returning false");
+            return false;
+        }
 
-	std::string stamp = (kConfCacheDir ? kConfCacheDir : std::string("")) + Replace(confFile, "/", "_");
-	MojStatT stampInfo, confInfo;
+        std::string stamp("");
+        MojStatT stampInfo, confInfo;
+        if(kConfCacheDir)
+            stamp = kConfCacheDir + Replace(confFile, "/", "_");
 
-	if (MojErrNone != MojStat(stamp.c_str(), &stampInfo))
-		return false;
+        if (MojErrNone != MojStat(stamp.c_str(), &stampInfo))
+            return false;
 
-	if (MojErrNone != MojStat(confFile.c_str(), &confInfo))
-		return false;
+        if (MojErrNone != MojStat(confFile.c_str(), &confInfo))
+            return false;
 
-	LOG_DEBUG("%s may already be configured - %s exists", confFile.c_str(), stamp.c_str());
-	return stampInfo.st_mtime >= confInfo.st_mtime;
+        LOG_DEBUG("%s may already be configured - %s exists", confFile.c_str(), stamp.c_str());
+            return stampInfo.st_mtime >= confInfo.st_mtime;
 }
 
 void Configurator::MarkConfigured(const std::string &confFile) const
 {
-	if (!CanCacheConfiguratorStatus(confFile))
-		return;
+       if (!CanCacheConfiguratorStatus(confFile))
+           return;
 
-	LOG_DEBUG("Attempting to mark '%s' as configured", confFile.c_str());
+        LOG_DEBUG("Attempting to mark '%s' as configured", confFile.c_str());
 
-	MojStatT confFileInfo;
-	MojErr err;
+        MojStatT confFileInfo;
+        MojErr err;
 
-	err = MojStat(confFile.c_str(), &confFileInfo);
+        err = MojStat(confFile.c_str(), &confFileInfo);
 
 #ifndef UTIME_NOW
-	/*
-		If we don't have futimens() then use futimes with msec resolution. Also the
-		last-access time will be set to 0 instead of "now".
-	*/
-	struct timeval *times;
-	struct timeval inherited[2];
+    /*
+        If we don't have futimens() then use futimes with msec resolution. Also the
+        last-access time will be set to 0 instead of "now".
+    */
+    struct timeval *times;
+    struct timeval inherited[2];
 
-	if (err == MojErrNone) {
-		inherited[0].tv_usec = 0; // don't care about atime
-		inherited[0].tv_sec = 0;
-		inherited[1].tv_usec = confFileInfo.st_mtim.tv_nsec / 1000;
-		inherited[1].tv_sec = confFileInfo.st_mtim.tv_sec + 1;
+    if (err == MojErrNone) {
+    inherited[0].tv_usec = 0; // don't care about atime
+    inherited[0].tv_sec = 0;
+    inherited[1].tv_usec = confFileInfo.st_mtim.tv_nsec / 1000;
+    inherited[1].tv_sec = confFileInfo.st_mtim.tv_sec + 1;
 
-		times = inherited;
+    times = inherited;
 
-//		MojLogDebug(m_log, "Inheriting timestamp of %d s, %d ms", (int)inherited[1].tv_sec, (int)inherited[1].tv_msec);
-	} else {
-		LOG_WARNING(MSG_CONFIGURATOR_WARNING, 1,
-				PMLOGKS("error", strerror(errno)),
-				"Using current time as timestamp - couldn't get timestamp of conf file (%s)", strerror(errno));
-		times = NULL;
-	}
+//    MojLogDebug(m_log, "Inheriting timestamp of %d s, %d ms", (int)inherited[1].tv_sec, (int)inherited[1].tv_msec);
+    } else {
+    LOG_WARNING(MSG_CONFIGURATOR_WARNING, 1,
+        PMLOGKS("error", strerror(errno)),
+        "Using current time as timestamp - couldn't get timestamp of conf file (%s)", strerror(errno));
+    times = NULL;
+    }
 
-	string stamp = kConfCacheDir + Replace(confFile, "/", "_");
+    string stamp = kConfCacheDir + Replace(confFile, "/", "_");
 
-	int stampFd = open(stamp.c_str(), O_CREAT | O_WRONLY | O_NOATIME, kCacheStampPerm);
-	if (stampFd == -1) {
-		MojLogError(m_log, "Failed to mark %s as configured: %s", confFile.c_str(), strerror(errno));
-		return;
-	}
+    int stampFd = open(stamp.c_str(), O_CREAT | O_WRONLY | O_NOATIME, kCacheStampPerm);
+    if (stampFd == -1) {
+        MojLogError(m_log, "Failed to mark %s as configured: %s", confFile.c_str(), strerror(errno));
+        return;
+    }
 
-	if (-1 == futimes(stampFd, times)) {
-		// fall through to close()
-		unlink(stamp.c_str());
-		LOG_ERROR(MSGID_CONFIGURATOR_ERROR, 2,
-				PMLOGKS("file", confFile.c_str())),
-				PMLOGKS("error", strerror(errno)),
-				"Failed to create configured stamp for %s (timestamp change failed: %s)", confFile.c_str(), strerror(errno));
-	} else {
-		LOG_DEBUG("'%s' marked as configured (stamp '%s' created)", confFile.c_str(), stamp.c_str());
-	}
+    if (-1 == futimes(stampFd, times)) {
+        // fall through to close()
+        unlink(stamp.c_str());
+        LOG_ERROR(MSGID_CONFIGURATOR_ERROR, 2,
+            PMLOGKS("file", confFile.c_str())),
+            PMLOGKS("error", strerror(errno)),
+            "Failed to create configured stamp for %s (timestamp change failed: %s)", confFile.c_str(), strerror(errno));
+        } else {
+            LOG_DEBUG("'%s' marked as configured (stamp '%s' created)", confFile.c_str(), stamp.c_str());
+        }
 
 #else
-	struct timespec *times;
-	struct timespec inherited[2];
+    struct timespec *times;
+    struct timespec inherited[2];
 
-	if (err == MojErrNone) {
-		inherited[0].tv_nsec = UTIME_NOW; // don't care about atime - linux bug prevents me from using UTIME_OMIT
-		inherited[0].tv_sec = 0; // linux bug
-		inherited[1].tv_nsec = confFileInfo.st_mtim.tv_nsec;
-		inherited[1].tv_sec = confFileInfo.st_mtim.tv_sec + 1;
+    if (err == MojErrNone) {
+        inherited[0].tv_nsec = UTIME_NOW; // don't care about atime - linux bug prevents me from using UTIME_OMIT
+        inherited[0].tv_sec = 0; // linux bug
+        inherited[1].tv_nsec = confFileInfo.st_mtim.tv_nsec;
+        inherited[1].tv_sec = confFileInfo.st_mtim.tv_sec + 1;
 
-		times = inherited;
+        times = inherited;
 
-//		MojLogDebug(m_log, "Inheriting timestamp of %d s, %d ns", (int)inherited[1].tv_sec, (int)inherited[1].tv_nsec);
-	} else {
-		LOG_WARNING(MSGID_CONFIGURATOR_WARNING, 1,
-				PMLOGKS("error", strerror(errno)),
-				"Using current time as timestamp - couldn't get timestamp of conf file (%s)", strerror(errno));
-		times = NULL;
-	}
+//    MojLogDebug(m_log, "Inheriting timestamp of %d s, %d ns", (int)inherited[1].tv_sec, (int)inherited[1].tv_nsec);
+    } else {
+        LOG_WARNING(MSGID_CONFIGURATOR_WARNING, 1,
+            PMLOGKS("error", strerror(errno)),
+            "Using current time as timestamp - couldn't get timestamp of conf file (%s)", strerror(errno));
+        times = NULL;
+    }
 
-	string stamp = (kConfCacheDir ? kConfCacheDir : std::string("")) + Replace(confFile, "/", "_");
+    std::string stamp("");
+    if(kConfCacheDir)
+        stamp = kConfCacheDir + Replace(confFile, "/", "_");
 
-	int stampFd = open(stamp.c_str(), O_CREAT | O_WRONLY | O_NOATIME, kCacheStampPerm);
-	if (stampFd == -1) {
-		LOG_ERROR(MSGID_CONFIGURATOR_ERROR, 2,
-				PMLOGKS("file", confFile.c_str()),
-				PMLOGKS("error", strerror(errno)),
-				"Failed to mark %s as configured: %s", confFile.c_str(), strerror(errno));
-		return;
-	}
+        int stampFd = open(stamp.c_str(), O_CREAT | O_WRONLY | O_NOATIME, kCacheStampPerm);
+        if (stampFd == -1) {
+            LOG_ERROR(MSGID_CONFIGURATOR_ERROR, 2,
+                PMLOGKS("file", confFile.c_str()),
+                PMLOGKS("error", strerror(errno)),
+                "Failed to mark %s as configured: %s", confFile.c_str(), strerror(errno));
+            return;
+        }
 
-	if (-1 == futimens(stampFd, times)) {
-		// fall through to close()
-		(void)unlink(stamp.c_str());
-		LOG_ERROR(MSGID_CONFIGURATOR_ERROR, 2,
-				PMLOGKS("file", confFile.c_str()),
-				PMLOGKS("error", strerror(errno)),
-				"Failed to create configured stamp for %s (timestamp change failed: %s)", confFile.c_str(), strerror(errno));
-	} else {
-		LOG_DEBUG("'%s' marked as configured (stamp '%s' created)", confFile.c_str(), stamp.c_str());
-	}
+        if (-1 == futimens(stampFd, times)) {
+            // fall through to close()
+            (void)unlink(stamp.c_str());
+            LOG_ERROR(MSGID_CONFIGURATOR_ERROR, 2,
+                PMLOGKS("file", confFile.c_str()),
+                PMLOGKS("error", strerror(errno)),
+                "Failed to create configured stamp for %s (timestamp change failed: %s)", confFile.c_str(), strerror(errno));
+        } else {
+            LOG_DEBUG("'%s' marked as configured (stamp '%s' created)", confFile.c_str(), stamp.c_str());
+        }
 
-	(void)close(stampFd);
+        (void)close(stampFd);
 #endif
 }
 
 void Configurator::UnmarkConfigured(const std::string &confFile) const
 {
-	if (!CanCacheConfiguratorStatus(confFile))
-		return;
+    if (!CanCacheConfiguratorStatus(confFile))
+        return;
 
-	string stamp = (kConfCacheDir ? kConfCacheDir : std::string("")) + Replace(confFile, "/", "_");
-	if (unlink(stamp.c_str()) == 0)
+    string stamp("");
+    if(kConfCacheDir)
+        stamp = kConfCacheDir + Replace(confFile, "/", "_");
+
+    if (unlink(stamp.c_str()) == 0)
     {
-		LOG_DEBUG("removed configured stamp for '%s'", confFile.c_str());
+        LOG_DEBUG("removed configured stamp for '%s'", confFile.c_str());
     }
-	else
+    else
     {
-		LOG_WARNING(MSGID_CONFIGURATOR_WARNING, 2,
-				PMLOGKS("file", confFile.c_str()),
-				PMLOGKS("stamp", stamp.c_str()),
-				"failed to remove configured stamp for '%s' ('%s')", confFile.c_str(), stamp.c_str());
+        LOG_WARNING(MSGID_CONFIGURATOR_WARNING, 2,
+            PMLOGKS("file", confFile.c_str()),
+            PMLOGKS("stamp", stamp.c_str()),
+            "failed to remove configured stamp for '%s' ('%s')", confFile.c_str(), stamp.c_str());
     }
 }
 

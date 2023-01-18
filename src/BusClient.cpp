@@ -693,13 +693,15 @@ gboolean BusClient::IterateConfiguratorsCallback(gpointer data)
 
 void BusClient::ConfiguratorComplete(ConfiguratorCollection::iterator configurator)
 {
-	LOG_TRACE("Entering function %s", __FUNCTION__);
-        ConfiguratorPtr ptr(*configurator);
-        if( ptr.get() )
-            LOG_DEBUG("... configurator %s complete (%p), %zd left.", ptr->ConfiguratorName(), configurator->get(), m_configurators.size() - 1);
-	configurator->reset();
-	m_configuratorsCompleted++;
-	RunNextConfigurator();
+    LOG_TRACE("Entering function %s", __FUNCTION__);
+
+    ConfiguratorPtr ptr(*configurator);
+    if( ptr.get() ) 
+        LOG_DEBUG("... configurator %s complete (%p), %zd left.", ptr->ConfiguratorName(), configurator->get(), m_configurators.size() - 1);
+
+     configurator->reset();
+     m_configuratorsCompleted++;
+     RunNextConfigurator();
 }
 
 void BusClient::ConfiguratorComplete(Configurator* configurator)
