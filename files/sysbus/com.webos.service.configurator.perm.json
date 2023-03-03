@@ -18,6 +18,6 @@
         "networking.query",
         "applications.query",
         "tts.internal",
-        "ppm.management"
+        "ppm.private"
     ]
 }
