@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2020 LG Electronics, Inc.
+// Copyright (c) 2009-2023 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -685,8 +685,9 @@ gboolean BusClient::IterateConfiguratorsCallback(gpointer data)
 void BusClient::ConfiguratorComplete(ConfiguratorCollection::iterator configurator)
 {
 	LOG_TRACE("Entering function %s", __FUNCTION__);
-
-	LOG_DEBUG("... configurator %s complete (%p), %zd left.", (*configurator)->ConfiguratorName(), configurator->get(), m_configurators.size() - 1);
+        ConfiguratorPtr ptr(*configurator);
+        if( ptr.get() )
+            LOG_DEBUG("... configurator %s complete (%p), %zd left.", ptr->ConfiguratorName(), configurator->get(), m_configurators.size() - 1);
 	configurator->reset();
 	m_configuratorsCompleted++;
 	RunNextConfigurator();
@@ -706,8 +707,10 @@ void BusClient::ConfiguratorComplete(Configurator* configurator)
 
 void BusClient::ConfiguratorComplete(int configuratorIndex)
 {
-	ConfiguratorCollection::iterator i = m_configurators.begin() + configuratorIndex;
-	ConfiguratorComplete(i);
+    if( configuratorIndex < m_configurators.size() ) {
+        ConfiguratorCollection::iterator i = m_configurators.begin() + configuratorIndex;
+        ConfiguratorComplete(i);
+    }
 }
 
 void BusClient::ScheduleShutdown()

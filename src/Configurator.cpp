@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2020 LG Electronics, Inc.
+// Copyright (c) 2009-2023 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -176,7 +176,7 @@ bool Configurator::IsAlreadyConfigured(const std::string& confFile) const
 		return false;
 	}
 
-	std::string stamp = kConfCacheDir + Replace(confFile, "/", "_");
+	std::string stamp = (kConfCacheDir ? kConfCacheDir : std::string("")) + Replace(confFile, "/", "_");
 	MojStatT stampInfo, confInfo;
 
 	if (MojErrNone != MojStat(stamp.c_str(), &stampInfo))
@@ -264,7 +264,7 @@ void Configurator::MarkConfigured(const std::string &confFile) const
 		times = NULL;
 	}
 
-	string stamp = kConfCacheDir + Replace(confFile, "/", "_");
+	string stamp = (kConfCacheDir ? kConfCacheDir : std::string("")) + Replace(confFile, "/", "_");
 
 	int stampFd = open(stamp.c_str(), O_CREAT | O_WRONLY | O_NOATIME, kCacheStampPerm);
 	if (stampFd == -1) {
@@ -295,7 +295,7 @@ void Configurator::UnmarkConfigured(const std::string &confFile) const
 	if (!CanCacheConfiguratorStatus(confFile))
 		return;
 
-	string stamp = kConfCacheDir + Replace(confFile, "/", "_");
+	string stamp = (kConfCacheDir ? kConfCacheDir : std::string("")) + Replace(confFile, "/", "_");
 	if (unlink(stamp.c_str()) == 0)
     {
 		LOG_DEBUG("removed configured stamp for '%s'", confFile.c_str());
