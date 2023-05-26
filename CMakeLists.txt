@@ -1,4 +1,4 @@
-# Copyright (c) 2007-2018 LG Electronics, Inc.
+# Copyright (c) 2007-2023 LG Electronics, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -51,6 +51,10 @@ if (NOT DEFINED USE_PMLOG OR USE_PMLOG)
     pkg_check_modules(PMLOG REQUIRED PmLogLib>=3)
     include_directories(${PMLOG_INCLUDE_DIRS})
     webos_add_compiler_flags(ALL ${PMLOG_CFLAGS_OTHER} -DUSE_PMLOG)
+endif()
+
+if (${WEBOS_TARGET_DISTRO} STREQUAL "starfish" OR ${WEBOS_TARGET_DISTRO} STREQUAL "signage")
+    add_definitions(-DSTARFISH_SIGNAGE_BUILD)
 endif()
 
 find_library(PTHREAD pthread REQUIRED)

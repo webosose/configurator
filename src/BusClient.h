@@ -159,7 +159,9 @@ private:
 	MojDbServiceClient			 m_dbClient;
 	MojDbServiceClient			 m_mediaDbClient;
     MojDbServiceClient           m_tempDbClient;
+#ifdef STARFISH_SIGNAGE_BUILD
     MojDbServiceClient           m_epgDbClient;
+#endif
 	ConfiguratorCollection       m_configurators;
 	size_t                       m_configuratorsCompleted;
 	MojRefCountedPtr<BusMethods> m_methods;

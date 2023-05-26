@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 LG Electronics, Inc.
+// Copyright (c) 2009-2023 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -169,6 +169,7 @@ bool TempDbKindConfigurator::CanCacheConfiguratorStatus(const std::string& confF
 
 ////////////////////////////////////////////////
 // epgDB
+#ifdef STARFISH_SIGNAGE_BUILD
 EpgDbKindConfigurator::EpgDbKindConfigurator(const std::string& id, ConfigType confType, RunType type, BusClient& busClient, MojDbClient& dbClient, string configDirectory)
 	: DbKindConfigurator(id, confType, type, busClient, dbClient, configDirectory)
 {
@@ -183,3 +184,4 @@ bool EpgDbKindConfigurator::CanCacheConfiguratorStatus(const std::string& confFi
 {
 	return false;
 }
+#endif

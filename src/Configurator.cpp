@@ -178,10 +178,26 @@ bool Configurator::IsAlreadyConfigured(const std::string& confFile) const
             return false;
         }
 
-	std::string stamp = kConfCacheDir + Replace(confFile, "/", "_");
-	LOG_DEBUG("%s may already be configured - %s exists", confFile.c_str(), stamp.c_str());
-	bool returnvalue = GenerateandVerifyConfigChecksum(confFile, stamp);
-		return returnvalue;
+#ifdef STARFISH_SIGNAGE_BUILD
+    std::string stamp = kConfCacheDir + Replace(confFile, "/", "_");
+    LOG_DEBUG("%s may already be configured - %s exists", confFile.c_str(), stamp.c_str());
+    bool returnvalue = GenerateandVerifyConfigChecksum(confFile, stamp);
+    return returnvalue;
+#else
+    std::string stamp("");
+    MojStatT stampInfo, confInfo;
+    if(kConfCacheDir)
+        stamp = kConfCacheDir + Replace(confFile, "/", "_");
+
+    if (MojErrNone != MojStat(stamp.c_str(), &stampInfo))
+        return false;
+
+    if (MojErrNone != MojStat(confFile.c_str(), &confInfo))
+        return false;
+
+    LOG_DEBUG("%s may already be configured - %s exists", confFile.c_str(), stamp.c_str());
+    return stampInfo.st_mtime >= confInfo.st_mtime;
+#endif
 }
 
 void Configurator::MarkConfigured(const std::string &confFile) const
@@ -488,6 +504,7 @@ const string Configurator::ReadFile(const string& filePath) const
 	return contents;
 }
 
+#ifdef STARFISH_SIGNAGE_BUILD
 bool Configurator::WriteFile(const std::string path, const std::string contents) const
 {
     std::ofstream file(path.c_str());
@@ -562,6 +579,7 @@ bool Configurator::GenerateandVerifyConfigChecksum(const std::string& path,  std
 		}
 	return retvalue;
 }
+#endif
 
 void Configurator::Complete()
 {

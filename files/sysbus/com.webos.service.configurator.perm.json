@@ -12,7 +12,9 @@
         "keymgrdatabase.management",
         "tempdatabase.management",
         "mediadatabase.management",
-        "database.management"
+        "database.management",
+        "database.internal",
+        "activities.manage",
         "settings",
         "devices",
         "networking.query",
