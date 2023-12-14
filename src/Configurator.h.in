@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2022 LG Electronics, Inc.
+// Copyright (c) 2009-2024 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-#ifdef STARFISH_SIGNAGE_BUILD
+#ifdef EXTENSION_STARFISH
 #include "md5sum.h"
 #endif
 
@@ -91,7 +91,7 @@ private:
 	bool              IsAlreadyConfigured(const std::string &confFile) const;
 	bool              GetConfigFiles(const std::string& parent, const std::string& directory);
 	const std::string ReadFile(const std::string& filePath) const;
-#ifdef STARFISH_SIGNAGE_BUILD
+#ifdef EXTENSION_STARFISH
 	bool              WriteFile(const std::string path, const std::string contents)const;
 	bool              GenerateandVerifyConfigChecksum(const std::string& path,  std::string cachepath)const;
 #endif

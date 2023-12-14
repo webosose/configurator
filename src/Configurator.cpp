@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2023 LG Electronics, Inc.
+// Copyright (c) 2009-2024 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -178,7 +178,7 @@ bool Configurator::IsAlreadyConfigured(const std::string& confFile) const
             return false;
         }
 
-#ifdef STARFISH_SIGNAGE_BUILD
+#ifdef EXTENSION_STARFISH
     std::string stamp = kConfCacheDir + Replace(confFile, "/", "_");
     LOG_DEBUG("%s may already be configured - %s exists", confFile.c_str(), stamp.c_str());
     bool returnvalue = GenerateandVerifyConfigChecksum(confFile, stamp);
@@ -504,7 +504,7 @@ const string Configurator::ReadFile(const string& filePath) const
 	return contents;
 }
 
-#ifdef STARFISH_SIGNAGE_BUILD
+#ifdef EXTENSION_STARFISH
 bool Configurator::WriteFile(const std::string path, const std::string contents) const
 {
     std::ofstream file(path.c_str());

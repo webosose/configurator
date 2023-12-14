@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2023 LG Electronics, Inc.
+// Copyright (c) 2009-2024 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ protected:
 	virtual bool CanCacheConfiguratorStatus(const std::string& confFile) const;
 };
 
-#ifdef STARFISH_SIGNAGE_BUILD
+#ifdef EXTENSION_STARFISH
 class EpgDbKindConfigurator : public DbKindConfigurator
 {
 public:
@@ -69,6 +69,6 @@ protected:
 
 	virtual bool CanCacheConfiguratorStatus(const std::string& confFile) const;
 };
-#endif /* STARFISH_SIGNAGE_BUILD */
+#endif /* EXTENSION_STARFISH */
 
 #endif /* DBKINDCONFIGURATOR_H_ */
