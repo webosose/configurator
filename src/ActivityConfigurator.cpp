@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2020 LG Electronics, Inc.
+// Copyright (c) 2009-2024 LG Electronics, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -106,10 +106,6 @@ ActivityConfigurator::ActivityConfigurator(const std::string& id, ConfigType con
 			m_firstUseOnly = false;
 		}
 	}
-#ifdef WEBOS_TARGET_MACHINE_STANDALONE
-	//Set the m_firstUseOnly flag to false as there is no first use run in Desktop.
- 	m_firstUseOnly = false;
-#endif
 }
 
 ActivityConfigurator::~ActivityConfigurator()

@@ -24,8 +24,6 @@ webos_component(3 0 0)
 
 webos_add_compiler_flags(ALL "-DMOJ_LINUX" --std=c++0x)
 
-webos_machine_dep()
-
 include_directories(src)
 
 include(FindPkgConfig)
