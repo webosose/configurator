@@ -35,8 +35,7 @@ const char* const ActivityConfigurator::ACTIVITY_NAME		  = "activityName";
 const char* const ActivityConfigurator::FIRST_USE_SAFE		  = "firstUseSafe";
 const char* const ActivityConfigurator::APP_DIR		  = "/etc/palm/activities/applications/";
 const char* const ActivityConfigurator::SERVICE_DIR		  = "/etc/palm/activities/services/";
-const char* const ActivityConfigurator::FIRST_USE_FLAG    = "/var/luna/preferences/ran-first-use";
-const char* const ActivityConfigurator::FIRST_USE_PROFILE_FLAG = "/var/luna/preferences/first-use-profile-created";
+const char* const ActivityConfigurator::FIRST_USE_FLAG    = "/var/luna/preferences/ran-firstuse";
 
 class ActivityConfigureResponse : public ConfiguratorCallback {
 public:
@@ -100,11 +99,8 @@ ActivityConfigurator::ActivityConfigurator(const std::string& id, ConfigType con
 	struct stat buf;
 	err = stat(FIRST_USE_FLAG, &buf);
 	if (err == 0) {
-		err = stat(FIRST_USE_PROFILE_FLAG, &buf);
-		if (err == 0) {
-			LOG_DEBUG("Fist Use has completed, installing all Activities");
-			m_firstUseOnly = false;
-		}
+		LOG_DEBUG("Fist Use has completed, installing all Activities");
+		m_firstUseOnly = false;
 	}
 }
 
