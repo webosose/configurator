@@ -55,6 +55,11 @@ if (EXTENSION_STARFISH)
     add_definitions(-DEXTENSION_STARFISH)
 endif()
 
+if(NO_FIRST_USE)
+    add_definitions(-DNO_FIRST_USE)
+    message(STATUS "FIRST_USE is not defined")
+endif()
+
 find_library(PTHREAD pthread REQUIRED)
 
 file(GLOB SOURCE_FILES src/*.cpp)

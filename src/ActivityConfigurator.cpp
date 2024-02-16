@@ -95,6 +95,7 @@ ActivityConfigurator::ActivityConfigurator(const std::string& id, ConfigType con
 	: Configurator(id, confType, type, busClient, configDirectory),
 	  m_firstUseOnly(true)
 {
+#ifndef NO_FIRST_USE
 	int err;
 	struct stat buf;
 	err = stat(FIRST_USE_FLAG, &buf);
@@ -102,6 +103,9 @@ ActivityConfigurator::ActivityConfigurator(const std::string& id, ConfigType con
 		LOG_DEBUG("Fist Use has completed, installing all Activities");
 		m_firstUseOnly = false;
 	}
+#else
+    m_firstUseOnly = false;
+#endif
 }
 
 ActivityConfigurator::~ActivityConfigurator()
