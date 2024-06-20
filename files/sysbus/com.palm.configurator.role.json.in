@@ -6,7 +6,7 @@
     "permissions": [
         {
             "service":"com.palm.configurator",
-            "outbound":["com.palm.activitymanager", "com.palm.db", "com.palm.tempdb", "com.webos.mediadb", "com.webos.epgdb"]
+            "outbound":["com.palm.activitymanager", "com.palm.db", "com.palm.filecache", "com.palm.tempdb", "com.webos.mediadb", "com.webos.epgdb"]
         }
     ]
 }
