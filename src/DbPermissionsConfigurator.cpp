@@ -86,7 +86,7 @@ MojErr DbPermissionsConfigurator::ProcessConfigRemoval(const string& filePath, M
 ////////////////////////////////////////////////
 // mediaDB
 MediaDbPermissionsConfigurator::MediaDbPermissionsConfigurator(const std::string& id, ConfigType confType, RunType type, BusClient& busClient, MojDbClient& dbClient, string configDirectory)
-    : DbPermissionsConfigurator(id, confType, type, busClient, dbClient, configDirectory)
+    : DbPermissionsConfigurator(id, confType, type, busClient, dbClient, std::move(configDirectory))
 {
 }
 
@@ -99,7 +99,7 @@ const char* MediaDbPermissionsConfigurator::ServiceName() const
 ////////////////////////////////////////////////
 // tempDB
 TempDbPermissionsConfigurator::TempDbPermissionsConfigurator(const std::string& id, ConfigType confType, RunType type, BusClient& busClient, MojDbClient& dbClient, string configDirectory)
-	: DbPermissionsConfigurator(id, confType, type, busClient, dbClient, configDirectory)
+	: DbPermissionsConfigurator(id, confType, type, busClient, dbClient, std::move(configDirectory))
 {
 }
 
@@ -117,7 +117,7 @@ bool TempDbPermissionsConfigurator::CanCacheConfiguratorStatus(const std::string
 // epgDB
 #ifdef EXTENSION_STARFISH
 EpgDbPermissionsConfigurator::EpgDbPermissionsConfigurator(const std::string& id, ConfigType confType, RunType type, BusClient& busClient, MojDbClient& dbClient, string configDirectory)
-	: DbPermissionsConfigurator(id, confType, type, busClient, dbClient, configDirectory)
+	: DbPermissionsConfigurator(id, confType, type, busClient, dbClient, std::move(configDirectory))
 {
 }
 

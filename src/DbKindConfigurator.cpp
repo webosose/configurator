@@ -141,7 +141,7 @@ MojErr DbKindConfigurator::ProcessConfigRemoval(const string& filePath, MojObjec
 ////////////////////////////////////////////////
 // mediaDB
 MediaDbKindConfigurator::MediaDbKindConfigurator(const std::string& id, ConfigType confType, RunType type, BusClient& busClient, MojDbClient& dbClient, string configDirectory)
-    : DbKindConfigurator(id, confType, type, busClient, dbClient, configDirectory)
+    : DbKindConfigurator(id, confType, type, busClient, dbClient, std::move(configDirectory))
 {
 }
 
@@ -153,7 +153,7 @@ const char* MediaDbKindConfigurator::ServiceName() const
 ////////////////////////////////////////////////
 // tempDB
 TempDbKindConfigurator::TempDbKindConfigurator(const std::string& id, ConfigType confType, RunType type, BusClient& busClient, MojDbClient& dbClient, string configDirectory)
-	: DbKindConfigurator(id, confType, type, busClient, dbClient, configDirectory)
+	: DbKindConfigurator(id, confType, type, busClient, dbClient, std::move(configDirectory))
 {
 }
 
@@ -171,7 +171,7 @@ bool TempDbKindConfigurator::CanCacheConfiguratorStatus(const std::string& confF
 // epgDB
 #ifdef EXTENSION_STARFISH
 EpgDbKindConfigurator::EpgDbKindConfigurator(const std::string& id, ConfigType confType, RunType type, BusClient& busClient, MojDbClient& dbClient, string configDirectory)
-	: DbKindConfigurator(id, confType, type, busClient, dbClient, configDirectory)
+	: DbKindConfigurator(id, confType, type, busClient, dbClient, std::move(configDirectory))
 {
 }
 

@@ -181,7 +181,7 @@ bool Configurator::IsAlreadyConfigured(const std::string& confFile) const
 #ifdef EXTENSION_STARFISH
     std::string stamp = kConfCacheDir + Replace(confFile, "/", "_");
     LOG_DEBUG("%s may already be configured - %s exists", confFile.c_str(), stamp.c_str());
-    bool returnvalue = GenerateandVerifyConfigChecksum(confFile, stamp);
+    bool returnvalue = GenerateandVerifyConfigChecksum(confFile, std::move(stamp));
     return returnvalue;
 #else
     std::string stamp("");
@@ -557,7 +557,7 @@ bool Configurator::GenerateandVerifyConfigChecksum(const std::string& path,  std
 	/*Storing the Checksum value in /var/cache/configurator/filemname.md5*/
 	if(m_newfile == true)
 		{
-			WriteFile(cachepath + ".md5", current_checksum);
+			WriteFile(cachepath + ".md5", std::move(current_checksum));
 			retvalue = false;
 		}
 	else
@@ -573,7 +573,7 @@ bool Configurator::GenerateandVerifyConfigChecksum(const std::string& path,  std
 			else
 				{
 					LOG_DEBUG("[%s %d] md5 diff", __FUNCTION__,__LINE__);
-					WriteFile(cachepath + ".md5", current_checksum);
+					WriteFile(cachepath + ".md5", std::move(current_checksum));
 					retvalue = false;
 				}
 		}
